@@ -31,7 +31,13 @@ const FIELDS: { key: keyof RegisterRequest; label: string; type?: string; placeh
 ];
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState<RegisterRequest>({ nim: "", nama: "", email: "", password: "" });
+  const [formData, setFormData] = useState<RegisterRequest>({ 
+  nim: "", 
+  nama: "", 
+  email: "", 
+  password: "",
+  role: "mahasiswa",
+ });
   const [error, setError]       = useState<string | null>(null);
   const [loading, setLoading]   = useState(false);
   const navigate = useNavigate();
