@@ -28,6 +28,10 @@ interface UserItem {
   role: "mahasiswa" | "admin";
 }
 
+interface TabpenggunaProps {
+  currentNim: string;
+}
+
 // ── Badge keterangan MK ──
 function KetBadge({ ket }: { ket: string | null }) {
   if (!ket) return <span className="text-gray-300 text-xs">—</span>;
