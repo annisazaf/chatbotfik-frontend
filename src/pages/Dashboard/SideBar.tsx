@@ -116,7 +116,7 @@ export default function Sidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex flex-col gap-1 flex-1 justify-center">
+      <nav className="flex flex-col items-center justify-center gap-1 flex-1">
         {navItems.map((item) => {
             const modalKeyMap: Record<string, string> = {
             "upload":      "upload-khs",
@@ -132,7 +132,7 @@ export default function Sidebar({
               <button
                 key={item.key}
                 onClick={() => handleNav(item)}
-                className={`flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium w-full transition-colors ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left transition-colors ${
                   isActive
                     ? "text-emerald-700 bg-white/40"
                     : "text-gray-600 hover:bg-white/30 hover:text-gray-800"
