@@ -12,9 +12,9 @@ const Logo = () => <img src={logoFika} alt="FIKA" style={{ width: 38, height: 38
 
 const NAV_ITEMS = ["Beranda", "Upload KHS", "Konseling", "Rekomendasi", "Riwayat"];
 const FEATURES = [
-  { emoji: "🧠", title: "Berbasis NLP & DeepSeek AI", desc: null },
-  { emoji: "📊", title: "Analisis Data Akademik Otomatis", desc: null },
-  { emoji: "📚", title: "Validasi Prasyarat Mata Kuliah", desc: null },
+  { emoji: "🧠", title: "Berbasis NLP & DeepSeek AI", desc: "Menggunakan teknologi NLP DeepSeek AI untuk memahami pertanyaan mahasiswa dan memberikan jawaban yang kontekstual dan personal." },
+  { emoji: "📊", title: "Analisis Data Akademik Otomatis", desc: "Sistem membaca dan menganalisis file KHS secara otomatis menggunakan OCR untuk mengekstrak data nilai, IPK, IPS, dan mata kuliah yang telah ditempuh." },
+  { emoji: "📚", title: "Validasi Prasyarat Mata Kuliah", desc: "Rekomendasi mata kuliah dihasilkan berdasarkan rule-based system yang memvalidasi prasyarat kurikulum sehingga hanya mata kuliah yang dapat diambil yang direkomendasikan." },
   { emoji: "🚀", title: "Rekomendasi Karier Personal", desc: "Menyediakan rekomendasi mata kuliah berdasarkan data akademik mahasiswa, dengan validasi prasyarat kurikulum. Selain itu juga menganalisis potensi karier berdasarkan performa studi dan minat mahasiswa. Seluruh riwayat konseling tersimpan dengan aman sehingga dapat diakses kembali kapan saja, serta didukung respons real-time 24/7." },
 ];
 const STEPS = [
@@ -26,7 +26,7 @@ const STEPS = [
 const FIELDS: { key: keyof RegisterRequest; label: string; type?: string; placeholder: string }[] = [
   { key: "nim",      label: "NIM",          placeholder: "Contoh: 2021001234" },
   { key: "nama",     label: "Nama Lengkap", placeholder: "Nama sesuai KTM" },
-  { key: "email",    label: "Email",        type: "email", placeholder: "nama@mahasiswa.upnvj.ac.id" },
+  { key: "email",    label: "Email",        type: "email", placeholder: "nim@mahasiswa.upnvj.ac.id" },
   { key: "password", label: "Password",     type: "password", placeholder: "••••••••" },
 ];
 
@@ -76,7 +76,6 @@ export default function RegisterPage() {
             </span>
           ))}
         </div>
-        <div className="auth-navbar__avatar">👤</div>
       </nav>
 
       {/* HERO */}
@@ -96,8 +95,8 @@ export default function RegisterPage() {
           <div className="auth-card auth-card--register">
             <div className="auth-card__header auth-card__header--register">
               <div className="auth-card__logo-wrap"><Logo /></div>
-              <h2 className="auth-card__title">Buat Akun Baru 🎓</h2>
-              <p className="auth-card__desc">Lengkapi data diri untuk mulai menggunakan FIKA</p>
+              <h2 className="auth-card__title">Buat Akun Baru</h2>
+              <p className="auth-card__desc">Lengkapi data diri untuk mulai menggunakan chatbot</p>
             </div>
 
             {error && (
@@ -153,13 +152,12 @@ export default function RegisterPage() {
           <h2 className="auth-section-title">Fitur Unggulan Sistem</h2>
           <p className="auth-section-divider">━━━━━━</p>
           {FEATURES.map((f, i) => (
-            <div key={i} className={`auth-feature-card ${f.desc ? "auth-feature-card--top" : ""}`}>
+            <div key={i} className="auth-feature-card auth-feature-card--hover">
               <span className="auth-feature-card__emoji">{f.emoji}</span>
               <div>
                 <div className="auth-feature-card__title">{f.title}</div>
-                {f.desc && <p className="auth-feature-card__desc">{f.desc}</p>}
+                <p className="auth-feature-card__desc auth-feature-card__desc--tooltip">{f.desc}</p>
               </div>
-              {f.desc && <div className="auth-feature-card__image">💻</div>}
             </div>
           ))}
         </div>
@@ -188,7 +186,7 @@ export default function RegisterPage() {
       </div>
 
       {/* FOOTER */}
-      <div className="auth-footer">© 2024 FIK UPN "Veteran" Jakarta · Sistem Konseling Akademik & Karier Mahasiswa</div>
+      <div className="auth-footer">© 2026 Annisa Zhafira Adhya · Sistem Konseling Akademik & Karier Mahasiswa</div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>

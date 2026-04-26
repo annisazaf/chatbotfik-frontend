@@ -16,9 +16,9 @@
   top: 0; left: 0; right: 0;
   z-index: 200;
   height: 62px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0 48px;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(12px);
@@ -33,11 +33,13 @@
   font-size: 15px;
   color: #307045;
   letter-spacing: 0.3px;
+  justify-self: start;
 }
 
 .auth-navbar__links {
   display: flex;
   gap: 28px;
+  justify-self: center;
 }
 
 .auth-navbar__link {
@@ -483,4 +485,31 @@
   text-align: center;
   color: rgba(255,255,255,0.55);
   font-size: 13px;
+}
+
+
+/* ── Feature card hover expand ── */
+.auth-feature-card--hover {
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  overflow: hidden;
+}
+.auth-feature-card--hover:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
+}
+.auth-feature-card__desc--tooltip {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #555;
+  margin-top: 0;
+}
+.auth-feature-card--hover:hover .auth-feature-card__desc--tooltip {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: 8px;
 }
