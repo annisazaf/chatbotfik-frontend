@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChatMessage, KHSResult } from "../types/chat";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const INITIAL_MESSAGES: ChatMessage[] = [
   {

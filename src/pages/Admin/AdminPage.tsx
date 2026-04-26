@@ -197,7 +197,7 @@ function TabPengguna({ currentNim: _currentNim }: TabPenggunaProps) {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:5000/api/admin/users", { credentials: "include" });
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/admin/users`, { credentials: "include" });
         const data = await res.json();
         setUsers(data.users || []);
       } catch { setUsers([]); }

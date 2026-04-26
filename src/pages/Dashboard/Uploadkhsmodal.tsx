@@ -45,7 +45,7 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
   useEffect(() => {
     const fetchLatest = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/chatbot/khs/latest", {
+        const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/khs/latest", {
           credentials: "include",
         });
         const data = await res.json();
@@ -77,7 +77,7 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
     formData.append("file", selectedFile);
 
     try {
-      const res = await fetch("http://localhost:5000/api/chatbot/upload", {
+      const res = await fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/upload", {
         method: "POST",
         credentials: "include",
         body: formData,

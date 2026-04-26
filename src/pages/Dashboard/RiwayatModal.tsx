@@ -29,7 +29,7 @@ export default function RiwayatModal({ onClose, onMulaiChat, onLanjutChat }: Riw
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/chatbot/sessions", { credentials: "include" })
+    fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions", { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         // Backend return { sessions: [...] }
@@ -62,7 +62,7 @@ export default function RiwayatModal({ onClose, onMulaiChat, onLanjutChat }: Riw
 
   const handleDelete = async (e: React.MouseEvent, sessionId: string) => {
     e.stopPropagation();
-    await fetch(`http://localhost:5000/api/chatbot/sessions/${sessionId}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions/${sessionId}`, {
       method: "DELETE",
       credentials: "include",
     });

@@ -52,7 +52,7 @@ export default function RekomendasiModal({ onClose, sessionId, khsResult }: Reko
     setLoadState("loading");
     setErrorMsg("");
 
-    fetch(`http://localhost:5000/api/chatbot/sessions/${sessionId}/rekomendasi`, {
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions/${sessionId}/rekomendasi`, {
       credentials: "include",
     })
       .then(async (r) => {
@@ -149,7 +149,7 @@ export default function RekomendasiModal({ onClose, sessionId, khsResult }: Reko
                       setLoadState("idle");
                       // Re-trigger useEffect dengan cara reset lalu set ulang
                       setTimeout(() => setLoadState("loading"), 50);
-                      fetch(`http://localhost:5000/api/chatbot/sessions/${sessionId}/rekomendasi`, {
+                      fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions/${sessionId}/rekomendasi`, {
                         credentials: "include",
                       })
                         .then(async (r) => {
