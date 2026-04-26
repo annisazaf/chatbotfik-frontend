@@ -116,7 +116,7 @@ export default function Sidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex flex-col items-center justify-center gap-1 flex-1">
+      <nav className="flex flex-col justify-center gap-1 flex-1">
         {navItems.map((item) => {
             const modalKeyMap: Record<string, string> = {
             "upload":      "upload-khs",
