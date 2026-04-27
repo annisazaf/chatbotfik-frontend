@@ -29,7 +29,7 @@ export default function RiwayatModal({ onClose, onMulaiChat, onLanjutChat }: Riw
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/sessions`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         // Backend return { sessions: [...] }
