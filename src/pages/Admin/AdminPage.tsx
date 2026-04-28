@@ -187,11 +187,30 @@ type TabPenggunaProps = {
   currentNim: string;
 };
 
-function TabPengguna({ currentNim: _currentNim }: TabPenggunaProps) {
+function TabPengguna({ currentNim }: TabPenggunaProps) {
   const [users, setUsers]     = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch]   = useState("");
   const [roleFilter, setRoleFilter] = useState<"semua" | "mahasiswa" | "admin">("semua");
+  const [roleLoading, setRoleLoading] = useState<string | null>(null);
+
+  const handleUbahRole = async (nim: string, currentRole: string) => {
+    const newRole = currentRole === "admin" ? "mahasiswa" : "admin";
+    if (!window.confirm(`Ubah role ${nim} dari "${currentRole}" menjadi "${newRole}"?`)) return;
+    setRoleLoading(nim);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/admin/users/${nim}/role`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Gagal mengubah role."); return; }
+      setUsers(prev => prev.map(u => u.nim === nim ? { ...u, role: newRole as "admin" | "mahasiswa" } : u));
+    } catch { alert("Gagal terhubung ke server."); }
+    finally { setRoleLoading(null); }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -264,21 +283,39 @@ function TabPengguna({ currentNim: _currentNim }: TabPenggunaProps) {
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div className="grid grid-cols-12 px-5 py-3 border-b border-gray-100 bg-gray-50">
             <span className="col-span-1 text-xs font-semibold text-gray-400 uppercase">#</span>
-            <span className="col-span-3 text-xs font-semibold text-gray-400 uppercase">NIM</span>
-            <span className="col-span-4 text-xs font-semibold text-gray-400 uppercase">Nama</span>
+            <span className="col-span-2 text-xs font-semibold text-gray-400 uppercase">NIM</span>
+            <span className="col-span-3 text-xs font-semibold text-gray-400 uppercase">Nama</span>
             <span className="col-span-3 text-xs font-semibold text-gray-400 uppercase">Email</span>
             <span className="col-span-1 text-xs font-semibold text-gray-400 uppercase text-center">Role</span>
+            <span className="col-span-2 text-xs font-semibold text-gray-400 uppercase text-center">Aksi</span>
           </div>
           {filtered.map((u, idx) => (
             <div key={u.nim} className={`grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 hover:bg-gray-50 transition-colors ${idx % 2 === 0 ? "" : "bg-gray-50/40"}`}>
               <span className="col-span-1 text-xs text-gray-400">{idx + 1}</span>
-              <span className="col-span-3 text-sm font-mono text-gray-600">{u.nim}</span>
-              <span className="col-span-4 text-sm font-medium text-gray-800">{u.nama}</span>
+              <span className="col-span-2 text-sm font-mono text-gray-600">{u.nim}</span>
+              <span className="col-span-3 text-sm font-medium text-gray-800">{u.nama}</span>
               <span className="col-span-3 text-xs text-gray-400 truncate pr-2">{u.email}</span>
               <span className="col-span-1 flex justify-center">
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${u.role === "admin" ? "bg-amber-50 text-amber-700" : "bg-green-50 text-green-700"}`}>
                   {u.role}
                 </span>
+              </span>
+              <span className="col-span-2 flex justify-center">
+                {u.nim !== currentNim ? (
+                  <button
+                    onClick={() => handleUbahRole(u.nim, u.role)}
+                    disabled={roleLoading === u.nim}
+                    className="px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors disabled:opacity-40"
+                    style={u.role === "admin"
+                      ? { borderColor: "#fbbf24", color: "#92400e", backgroundColor: "#fffbeb" }
+                      : { borderColor: "#6ee7b7", color: "#065f46", backgroundColor: "#f0fdf4" }
+                    }
+                  >
+                    {roleLoading === u.nim ? "..." : u.role === "admin" ? "→ Mahasiswa" : "→ Admin"}
+                  </button>
+                ) : (
+                  <span className="text-xs text-gray-300 italic">—</span>
+                )}
               </span>
             </div>
           ))}
