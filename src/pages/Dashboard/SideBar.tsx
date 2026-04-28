@@ -84,7 +84,6 @@ export default function Sidebar({
   activeModal,
 }: SidebarProps) {
   const [active, setActive] = useState<string>(activeKey);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentUser: User = user ?? {
     name: "Pengguna",
