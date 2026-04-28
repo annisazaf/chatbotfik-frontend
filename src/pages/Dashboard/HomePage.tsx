@@ -68,7 +68,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
         user={{ name: user.nama, nim: user.nim }}
       />
 
-      <main className="ml-56 flex-1 relative flex flex-col min-h-screen"
+      <main className="md:ml-56 flex-1 relative flex flex-col min-h-screen pt-14 md:pt-0 pb-16 md:pb-0"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: "cover",
@@ -79,7 +79,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
 
         {/* ── BERANDA ── */}
         {!isKonseling && (
-          <div className="relative z-10 flex flex-col items-center justify-between flex-1 min-h-screen px-10">
+          <div className="relative z-10 flex flex-col items-center justify-between flex-1 min-h-screen px-4 md:px-10">
             <div className="flex flex-col items-center justify-center flex-1 gap-10 pt-16 pb-8 w-full">
               <div className="flex flex-col items-center gap-3 text-center">
                 <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
@@ -89,7 +89,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
                 <p className="text-gray-500 text-sm">Siap merencanakan studi dan kariermu?</p>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 w-full max-w-3xl">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-3xl">
                 {features.map((f) => (
                   <div
                     key={f.title}
@@ -122,7 +122,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
         {/* ── KONSELING ── */}
         {isKonseling && (
           <div className="relative z-10 flex flex-col flex-1 min-h-screen">
-            <div className="flex-1 overflow-y-auto px-10 py-8 flex flex-col gap-5">
+            <div className="flex-1 overflow-y-auto px-4 md:px-10 py-4 md:py-8 flex flex-col gap-5">
               {messages.map((msg) => (
                 <ChatBubble key={msg.id} msg={msg} />
               ))}
@@ -130,7 +130,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
               <div ref={chatEndRef} />
             </div>
 
-            <div className="px-10 pb-8 pt-2">
+            <div className="px-4 md:px-10 pb-4 md:pb-8 pt-2">
               <ChatInput
                 value={message}
                 onChange={setMessage}

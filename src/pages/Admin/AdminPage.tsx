@@ -233,7 +233,7 @@ function TabPengguna({ currentNim }: TabPenggunaProps) {
   const totalAdmin     = users.filter(u => u.role === "admin").length;
 
   return (
-    <div className="flex-1 px-8 py-6 flex flex-col gap-5">
+    <div className="flex-1 px-4 md:px-8 py-4 md:py-6 flex flex-col gap-5">
 
       {/* Stat cards */}
       <div className="grid grid-cols-3 gap-4">
@@ -280,7 +280,7 @@ function TabPengguna({ currentNim }: TabPenggunaProps) {
       ) : filtered.length === 0 ? (
         <div className="flex items-center justify-center py-20 text-gray-400 text-sm">Tidak ada pengguna ditemukan.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden overflow-x-auto">
           <div className="grid grid-cols-12 px-5 py-3 border-b border-gray-100 bg-gray-50">
             <span className="col-span-1 text-xs font-semibold text-gray-400 uppercase">#</span>
             <span className="col-span-2 text-xs font-semibold text-gray-400 uppercase">NIM</span>

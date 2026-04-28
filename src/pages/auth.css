@@ -513,3 +513,101 @@
   opacity: 1;
   margin-top: 8px;
 }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — MOBILE (max-width: 768px)
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Navbar ── */
+  .auth-navbar {
+    padding: 0 16px;
+    grid-template-columns: auto 1fr auto;
+  }
+  .auth-navbar__links {
+    display: none; /* sembunyikan menu di mobile */
+  }
+  .auth-navbar__brand span {
+    font-size: 13px;
+  }
+
+  /* ── Hero: stack vertikal ── */
+  .auth-hero {
+    flex-direction: column;
+    padding-top: 70px;
+    min-height: unset;
+  }
+  .auth-hero__left {
+    width: 100%;
+    min-height: unset;
+    padding: 24px 20px 0;
+  }
+  .auth-hero__right {
+    width: 100%;
+    padding: 16px 20px 24px;
+    display: flex;
+    justify-content: center;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+  }
+  .auth-hero__title {
+    font-size: clamp(22px, 6vw, 36px);
+  }
+  .auth-hero__sub {
+    font-size: 12px;
+  }
+
+  /* ── Feature cards: 2 kolom di mobile ── */
+  .auth-features-section {
+    padding: 24px 16px;
+  }
+  .auth-features-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .auth-feature-card {
+    padding: 14px 12px;
+  }
+  .auth-feature-card__emoji {
+    font-size: 20px;
+  }
+  .auth-feature-card__title {
+    font-size: 11px;
+  }
+
+  /* ── Chat section ── */
+  .auth-chat-section {
+    padding: 24px 16px;
+    flex-direction: column;
+  }
+  .auth-chat-section__bubbles {
+    max-width: 100%;
+  }
+
+  /* ── Steps ── */
+  .auth-steps {
+    padding: 24px 16px;
+  }
+  .auth-steps-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── Footer ── */
+  .auth-footer {
+    padding: 16px;
+    font-size: 11px;
+  }
+}
+
+/* ── Sangat kecil (iPhone SE dll) ── */
+@media (max-width: 380px) {
+  .auth-features-grid {
+    grid-template-columns: 1fr;
+  }
+  .auth-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}

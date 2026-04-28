@@ -84,6 +84,7 @@ export default function Sidebar({
   activeModal,
 }: SidebarProps) {
   const [active, setActive] = useState<string>(activeKey);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentUser: User = user ?? {
     name: "Pengguna",
@@ -106,8 +107,10 @@ export default function Sidebar({
   };
 
   return (
+    <>
+    {/* ── DESKTOP SIDEBAR ── */}
     <aside
-      className="fixed top-0 left-0 bottom-0 w-56 flex flex-col px-4 py-7 z-40"
+      className="fixed top-0 left-0 bottom-0 w-56 flex-col px-4 py-7 z-40 hidden md:flex"
       style={{ backgroundColor: "#FCFBFC", border: "1.5px solid transparent" }}
     >
       {/* Logo */}
@@ -178,5 +181,47 @@ export default function Sidebar({
         </div>
       </div>
     </aside>
+
+    {/* ── MOBILE TOP HEADER ── */}
+    <header className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
+      style={{ backgroundColor: "#FCFBFC", borderBottom: "1px solid #e5e7eb" }}>
+      <img src={logo} alt="Logo" className="w-9 h-9 object-contain" />
+      <span className="text-sm font-bold" style={{ color: "#307045" }}>ChatbotFIK</span>
+      <div className="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center text-white text-xs font-bold">
+        {currentUser.name.charAt(0)}
+      </div>
+    </header>
+
+    {/* ── MOBILE BOTTOM NAVBAR ── */}
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
+      style={{ backgroundColor: "#FCFBFC", borderTop: "1px solid #e5e7eb" }}>
+      {navItems.map((item) => {
+        const modalKeyMap: Record<string, string> = {
+          "upload":      "upload-khs",
+          "rekomendasi": "rekomendasi",
+          "riwayat":     "riwayat",
+        };
+        const isActive = activeModal != null
+          ? item.isModal && modalKeyMap[activeModal] === item.key
+          : !item.isModal && active === item.key;
+        return (
+          <button key={item.key} onClick={() => handleNav(item)}
+            className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
+            style={{ color: isActive ? "#307045" : "#9ca3af" }}>
+            {item.icon}
+            <span className="text-[10px] font-medium">{item.label}</span>
+          </button>
+        );
+      })}
+      <button onClick={onLogout}
+        className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl"
+        style={{ color: "#9ca3af" }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span className="text-[10px] font-medium">Keluar</span>
+      </button>
+    </nav>
+    </>
   );
 }
