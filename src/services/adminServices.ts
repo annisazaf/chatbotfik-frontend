@@ -1,96 +1,144 @@
 // src/services/adminServices.ts
 
 import { api } from "./api";
-import { ProdiItem, MataKuliahItem, MKListResponse, MKFormData, ProdiFormData } from "../types/admin";
+import {
+  ProdiItem,
+  MataKuliahItem,
+  MKListResponse,
+  MKFormData,
+  ProdiFormData,
+} from "../types/admin";
+
+const authConfig = () => ({
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+  },
+});
 
 export const adminService = {
-
   // ── Cek admin ──
   checkAdmin: async () => {
-    const res = await api.get("/admin/check");
+    const res = await api.get("/admin/check", authConfig());
     return res.data;
   },
 
   // ── PRODI ──
   listProdi: async (): Promise<ProdiItem[]> => {
-    const res = await api.get("/admin/prodi");
-    return res.data.prodi;
+    const res = await api.get("/admin/prodi", authConfig());
+    return res.data.prodi || [];
   },
 
   getProdi: async (id: number): Promise<ProdiItem> => {
-    const res = await api.get(`/admin/prodi/${id}`);
+    const res = await api.get(`/admin/prodi/${id}`, authConfig());
     return res.data;
   },
 
   tambahProdi: async (data: ProdiFormData): Promise<ProdiItem> => {
-    const res = await api.post("/admin/prodi", {
-      nama_prodi:        data.nama_prodi,
-      total_semester:    parseInt(data.total_semester),
-      sks_lulus:         parseInt(data.sks_lulus),
-      syarat_sidang_sks: parseInt(data.syarat_sidang_sks),
-      is_active:         data.is_active,
-    });
+    const res = await api.post(
+      "/admin/prodi",
+      {
+        nama_prodi: data.nama_prodi,
+        total_semester: parseInt(data.total_semester),
+        sks_lulus: parseInt(data.sks_lulus),
+        syarat_sidang_sks: parseInt(data.syarat_sidang_sks),
+        is_active: data.is_active,
+      },
+      authConfig()
+    );
     return res.data.prodi;
   },
 
-  editProdi: async (id: number, data: Partial<ProdiFormData>): Promise<ProdiItem> => {
+  editProdi: async (
+    id: number,
+    data: Partial<ProdiFormData>
+  ): Promise<ProdiItem> => {
     const payload: Record<string, unknown> = {};
-    if (data.nama_prodi        !== undefined) payload.nama_prodi        = data.nama_prodi;
-    if (data.total_semester    !== undefined) payload.total_semester    = parseInt(data.total_semester);
-    if (data.sks_lulus         !== undefined) payload.sks_lulus         = parseInt(data.sks_lulus);
-    if (data.syarat_sidang_sks !== undefined) payload.syarat_sidang_sks = parseInt(data.syarat_sidang_sks);
-    if (data.is_active         !== undefined) payload.is_active         = data.is_active;
-    const res = await api.put(`/admin/prodi/${id}`, payload);
+
+    if (data.nama_prodi !== undefined) payload.nama_prodi = data.nama_prodi;
+    if (data.total_semester !== undefined)
+      payload.total_semester = parseInt(data.total_semester);
+    if (data.sks_lulus !== undefined)
+      payload.sks_lulus = parseInt(data.sks_lulus);
+    if (data.syarat_sidang_sks !== undefined)
+      payload.syarat_sidang_sks = parseInt(data.syarat_sidang_sks);
+    if (data.is_active !== undefined) payload.is_active = data.is_active;
+
+    const res = await api.put(`/admin/prodi/${id}`, payload, authConfig());
     return res.data.prodi;
   },
 
   hapusProdi: async (id: number): Promise<void> => {
-    await api.delete(`/admin/prodi/${id}`);
+    await api.delete(`/admin/prodi/${id}`, authConfig());
   },
 
   // ── MATA KULIAH ──
   listMK: async (prodiId: number): Promise<MKListResponse> => {
-    const res = await api.get(`/admin/prodi/${prodiId}/mk`);
+    const res = await api.get(`/admin/prodi/${prodiId}/mk`, authConfig());
     return res.data;
   },
 
-  tambahMK: async (prodiId: number, data: MKFormData): Promise<MataKuliahItem> => {
-    const res = await api.post("/admin/mk", {
-      prodi_id:   prodiId,
-      kode:       data.kode,
-      nama:       data.nama,
-      sks:        parseInt(data.sks),
-      semester:   parseInt(data.semester),
-      keterangan: data.keterangan || null,
-      prasyarat:  data.prasyarat  || null,
-    });
+  tambahMK: async (
+    prodiId: number,
+    data: MKFormData
+  ): Promise<MataKuliahItem> => {
+    const res = await api.post(
+      "/admin/mk",
+      {
+        prodi_id: prodiId,
+        kode: data.kode,
+        nama: data.nama,
+        sks: parseInt(data.sks),
+        semester: parseInt(data.semester),
+        keterangan: data.keterangan || null,
+        prasyarat: data.prasyarat || null,
+      },
+      authConfig()
+    );
     return res.data.mk;
   },
 
-  editMK: async (mkId: number, data: Partial<MKFormData>): Promise<MataKuliahItem> => {
+  editMK: async (
+    mkId: number,
+    data: Partial<MKFormData>
+  ): Promise<MataKuliahItem> => {
     const payload: Record<string, unknown> = {};
-    if (data.kode       !== undefined) payload.kode       = data.kode;
-    if (data.nama       !== undefined) payload.nama       = data.nama;
-    if (data.sks        !== undefined) payload.sks        = parseInt(data.sks);
-    if (data.semester   !== undefined) payload.semester   = parseInt(data.semester);
-    if (data.keterangan !== undefined) payload.keterangan = data.keterangan || null;
-    if (data.prasyarat  !== undefined) payload.prasyarat  = data.prasyarat  || null;
-    const res = await api.put(`/admin/mk/${mkId}`, payload);
+
+    if (data.kode !== undefined) payload.kode = data.kode;
+    if (data.nama !== undefined) payload.nama = data.nama;
+    if (data.sks !== undefined) payload.sks = parseInt(data.sks);
+    if (data.semester !== undefined) payload.semester = parseInt(data.semester);
+    if (data.keterangan !== undefined)
+      payload.keterangan = data.keterangan || null;
+    if (data.prasyarat !== undefined)
+      payload.prasyarat = data.prasyarat || null;
+
+    const res = await api.put(`/admin/mk/${mkId}`, payload, authConfig());
     return res.data.mk;
   },
 
   hapusMK: async (mkId: number): Promise<void> => {
-    await api.delete(`/admin/mk/${mkId}`);
+    await api.delete(`/admin/mk/${mkId}`, authConfig());
   },
 
   // ── IMPORT XLSX ──
-  importXLSX: async (file: File, prodiId?: number): Promise<{ message: string; total_mk: number; total_sks: number }> => {
+  importXLSX: async (
+    file: File,
+    prodiId?: number
+  ): Promise<{ message: string; total_mk: number; total_sks: number }> => {
     const formData = new FormData();
     formData.append("file", file);
-    if (prodiId) formData.append("prodi_id", String(prodiId));
+
+    if (prodiId) {
+      formData.append("prodi_id", String(prodiId));
+    }
+
     const res = await api.post("/admin/import-xlsx", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "multipart/form-data",
+      },
     });
+
     return res.data;
   },
 };
