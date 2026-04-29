@@ -16,10 +16,10 @@
   top: 0; left: 0; right: 0;
   z-index: 200;
   height: 62px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  padding: 0 48px;
+  justify-content: space-between;
+  padding: 0 20px;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(12px);
   box-shadow: 0 1px 0 rgba(0,0,0,0.07);
@@ -33,13 +33,11 @@
   font-size: 15px;
   color: #307045;
   letter-spacing: 0.3px;
-  justify-self: start;
 }
 
 .auth-navbar__links {
-  display: flex;
-  gap: 28px;
-  justify-self: center;
+  display: none; /* hidden on mobile */
+  gap: 20px;
 }
 
 .auth-navbar__link {
@@ -50,6 +48,7 @@
   border-bottom: 2px solid transparent;
   padding-bottom: 2px;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .auth-navbar__link--active {
@@ -94,54 +93,60 @@
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 60px 48px;
-  display: grid;
-  gap: 48px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
   align-items: center;
 }
 
 /* Login: card lebih kecil */
-.auth-hero__content--login  { grid-template-columns: 1fr 400px; }
+.auth-hero__content--login  { }
 /* Register: card sedikit lebih lebar karena 4 field */
-.auth-hero__content--register { grid-template-columns: 1fr 420px; }
+.auth-hero__content--register { }
 
 /* ── Hero left text ── */
 .auth-hero__eyebrow {
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 3px;
   font-weight: 700;
   color: rgba(255,255,255,0.5);
   text-transform: uppercase;
   margin-bottom: 14px;
+  text-align: center;
 }
 
 .auth-hero__title {
-  font-size: 44px;
+  font-size: 28px;
   font-weight: 900;
   color: #fff;
   line-height: 1.15;
   margin: 0 0 18px;
+  text-align: center;
   text-shadow: 0 2px 24px rgba(0,0,0,0.18);
 }
 
 .auth-hero__subtitle {
   color: rgba(255,255,255,0.78);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.65;
-  max-width: 480px;
   margin: 0;
+  text-align: center;
 }
 
 /* ── Auth card (form) ── */
 .auth-card {
   background: rgba(255,255,255,0.98);
   border-radius: 22px;
-  padding: 40px 36px;
+  padding: 32px 24px;
   box-shadow: 0 30px 70px rgba(0,0,0,0.22);
+  width: 100%;
+  max-width: 400px;
 }
 
 .auth-card--register {
-  padding: 36px 36px;
+  padding: 28px 24px;
+  max-width: 420px;
 }
 
 .auth-card__header {
@@ -150,7 +155,7 @@
 }
 
 .auth-card__header--register {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .auth-card__logo-wrap {
@@ -185,7 +190,7 @@
 }
 
 .auth-form--register {
-  gap: 14px;
+  gap: 12px;
 }
 
 .auth-form__label {
@@ -220,6 +225,7 @@
   margin-top: 4px;
   box-shadow: 0 4px 16px rgba(48,112,69,0.3);
   transition: background 0.2s, transform 0.2s;
+  width: 100%;
 }
 
 .auth-form__btn:hover:not(:disabled) {
@@ -248,7 +254,7 @@
 /* ── FIKA chat bubble section ── */
 .auth-chat-section {
   background: #fff;
-  padding: 72px 48px 56px;
+  padding: 48px 20px 40px;
   display: flex;
   justify-content: center;
 }
@@ -261,13 +267,13 @@
 .auth-chat-section__row {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
 .auth-chat-section__avatar {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   flex-shrink: 0;
   background: #e8f5e9;
@@ -287,7 +293,7 @@
 .auth-bubble {
   background: #f3f4f6;
   border-radius: 4px 16px 16px 16px;
-  padding: 12px 18px;
+  padding: 12px 16px;
 }
 
 .auth-bubble__name {
@@ -308,13 +314,12 @@
   font-size: 13px;
   color: #374151;
   line-height: 1.65;
-  max-width: 520px;
 }
 
 /* ── Fitur unggulan section ── */
 .auth-features-section {
   background: #f9fafb;
-  padding: 64px 48px;
+  padding: 48px 20px;
 }
 
 .auth-features-section__inner {
@@ -324,7 +329,7 @@
 
 .auth-section-title {
   text-align: center;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
   color: #111;
   margin: 0 0 6px;
@@ -335,21 +340,21 @@
   color: #307045;
   font-weight: 700;
   font-size: 20px;
-  margin: 0 0 36px;
+  margin: 0 0 28px;
 }
 
 .auth-section-divider--sm {
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 }
 
 .auth-feature-card {
   background: #fff;
   border-radius: 14px;
-  padding: 18px 24px;
+  padding: 16px 18px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   border: 1px solid #f0f0f0;
 }
@@ -365,7 +370,7 @@
 
 .auth-feature-card__title {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   color: #111;
 }
 
@@ -374,26 +379,25 @@
   font-size: 13px;
   color: #6b7280;
   line-height: 1.65;
-  max-width: 580px;
 }
 
 .auth-feature-card__image {
-  width: 160px;
-  height: 110px;
+  width: 120px;
+  height: 90px;
   border-radius: 12px;
   flex-shrink: 0;
   background: #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 28px;
   margin-left: auto;
 }
 
 /* ── Cara penggunaan section ── */
 .auth-steps-section {
   background: #fff;
-  padding: 64px 48px;
+  padding: 48px 20px;
 }
 
 .auth-steps-section__inner {
@@ -406,7 +410,7 @@
   align-items: center;
   gap: 14px;
   justify-content: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .auth-steps-fika__avatar {
@@ -418,36 +422,37 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .auth-steps-fika__bubble {
   background: #f3f4f6;
   border-radius: 4px 14px 14px 14px;
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-size: 13px;
   color: #374151;
   margin: 0;
 }
 
+/* Steps: 2 col on mobile, 4 col on desktop */
 .auth-steps-row {
-  display: flex;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
   justify-content: center;
 }
 
 .auth-step-card {
-  flex: 1;
-  max-width: 200px;
   background: #f9fafb;
   border-radius: 16px;
-  padding: 24px 18px;
+  padding: 20px 14px;
   text-align: center;
   border: 1px solid #e5e7eb;
 }
 
 .auth-step-card__number {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #307045;
   color: #fff;
@@ -455,24 +460,24 @@
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 14px;
-  margin: 0 auto 14px;
+  font-size: 13px;
+  margin: 0 auto 12px;
 }
 
 .auth-step-card__emoji {
-  font-size: 26px;
-  margin-bottom: 10px;
+  font-size: 24px;
+  margin-bottom: 8px;
 }
 
 .auth-step-card__title {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   color: #111;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .auth-step-card__desc {
-  font-size: 12px;
+  font-size: 11px;
   color: #6b7280;
   line-height: 1.55;
   margin: 0;
@@ -481,12 +486,11 @@
 /* ── Footer ── */
 .auth-footer {
   background: #1b5e35;
-  padding: 22px 48px;
+  padding: 20px;
   text-align: center;
   color: rgba(255,255,255,0.55);
-  font-size: 13px;
+  font-size: 12px;
 }
-
 
 /* ── Feature card hover expand ── */
 .auth-feature-card--hover {
@@ -514,100 +518,98 @@
   margin-top: 8px;
 }
 
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — MOBILE (max-width: 768px)
-═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
+/* ── MEDIA QUERIES ── */
 
-  /* ── Navbar ── */
+/* Tablet and up (md: 768px) */
+@media (min-width: 768px) {
   .auth-navbar {
-    padding: 0 16px;
-    grid-template-columns: auto 1fr auto;
-  }
-  .auth-navbar__links {
-    display: none; /* sembunyikan menu di mobile */
-  }
-  .auth-navbar__brand span {
-    font-size: 13px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    padding: 0 48px;
   }
 
-  /* ── Hero: stack vertikal ── */
-  .auth-hero {
-    flex-direction: column;
-    padding-top: 70px;
-    min-height: unset;
+  .auth-navbar__brand {
+    justify-self: start;
   }
-  .auth-hero__left {
-    width: 100%;
-    min-height: unset;
-    padding: 24px 20px 0;
-  }
-  .auth-hero__right {
-    width: 100%;
-    padding: 16px 20px 24px;
+
+  .auth-navbar__links {
     display: flex;
-    justify-content: center;
+    justify-self: center;
   }
-  .auth-card {
-    width: 100%;
-    max-width: 420px;
+
+  .auth-hero__content {
+    padding: 60px 48px;
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
   }
+
+  .auth-hero__content--login  { }
+  .auth-hero__content--register { }
+
+  .auth-hero__eyebrow,
+  .auth-hero__title,
+  .auth-hero__subtitle {
+    text-align: left;
+  }
+
   .auth-hero__title {
-    font-size: clamp(22px, 6vw, 36px);
+    font-size: 44px;
   }
-  .auth-hero__sub {
+
+  .auth-card {
+    min-width: 380px;
+  }
+
+  .auth-card--register {
+    min-width: 400px;
+  }
+
+  .auth-chat-section {
+    padding: 72px 48px 56px;
+  }
+
+  .auth-features-section {
+    padding: 64px 48px;
+  }
+
+  .auth-steps-section {
+    padding: 64px 48px;
+  }
+
+  .auth-steps-row {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .auth-step-card {
+    padding: 24px 18px;
+  }
+
+  .auth-step-card__number {
+    width: 44px;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .auth-step-card__emoji {
+    font-size: 26px;
+  }
+
+  .auth-step-card__title {
+    font-size: 14px;
+  }
+
+  .auth-step-card__desc {
     font-size: 12px;
   }
 
-  /* ── Feature cards: 2 kolom di mobile ── */
-  .auth-features-section {
-    padding: 24px 16px;
-  }
-  .auth-features-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .auth-feature-card {
-    padding: 14px 12px;
-  }
-  .auth-feature-card__emoji {
-    font-size: 20px;
-  }
-  .auth-feature-card__title {
-    font-size: 11px;
-  }
-
-  /* ── Chat section ── */
-  .auth-chat-section {
-    padding: 24px 16px;
-    flex-direction: column;
-  }
-  .auth-chat-section__bubbles {
-    max-width: 100%;
-  }
-
-  /* ── Steps ── */
-  .auth-steps {
-    padding: 24px 16px;
-  }
-  .auth-steps-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  /* ── Footer ── */
   .auth-footer {
-    padding: 16px;
-    font-size: 11px;
+    padding: 22px 48px;
+    font-size: 13px;
   }
-}
 
-/* ── Sangat kecil (iPhone SE dll) ── */
-@media (max-width: 380px) {
-  .auth-features-grid {
-    grid-template-columns: 1fr;
-  }
-  .auth-steps-grid {
-    grid-template-columns: 1fr;
+  .auth-section-title {
+    font-size: 26px;
   }
 }

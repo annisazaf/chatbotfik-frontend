@@ -50,7 +50,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
     if (!message.trim()) return;
     sendMessage(message);
     setMessage("");
-    setActiveNav("konseling"); // ← tambah ini
+    setActiveNav("konseling");
   };
 
   const closeModal = () => setActiveModal(null);
@@ -68,7 +68,9 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
         user={{ name: user.nama, nim: user.nim }}
       />
 
-      <main className="md:ml-56 flex-1 relative flex flex-col min-h-screen pt-14 md:pt-0 pb-16 md:pb-0"
+      {/* main: on mobile pt-14 for topbar, on desktop ml-56 */}
+      <main
+        className="flex-1 relative flex flex-col min-h-screen pt-14 md:pt-0 md:ml-56"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: "cover",
@@ -80,34 +82,35 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
         {/* ── BERANDA ── */}
         {!isKonseling && (
           <div className="relative z-10 flex flex-col items-center justify-between flex-1 min-h-screen px-4 md:px-10">
-            <div className="flex flex-col items-center justify-center flex-1 gap-10 pt-16 pb-8 w-full">
+            <div className="flex flex-col items-center justify-center flex-1 gap-6 md:gap-10 pt-10 pb-6 md:pt-16 md:pb-8 w-full">
               <div className="flex flex-col items-center gap-3 text-center">
-                <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
-                <h1 className="text-3xl font-bold mt-1" style={{ color: "#307045" }}>
+                <img src={logo} alt="Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain" />
+                <h1 className="text-2xl md:text-3xl font-bold mt-1" style={{ color: "#307045" }}>
                   Selamat Datang, FIKERS!
                 </h1>
                 <p className="text-gray-500 text-sm">Siap merencanakan studi dan kariermu?</p>
               </div>
 
+              {/* Feature cards: 2 col on mobile, 4 col on desktop */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-3xl">
                 {features.map((f) => (
                   <div
                     key={f.title}
-                    className="bg-white rounded-2xl p-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow cursor-default"
+                    className="bg-white rounded-2xl p-3 md:p-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow cursor-default"
                     style={{
                       border: "1.5px solid transparent",
                       background: "linear-gradient(white, white) padding-box, linear-gradient(135deg, #a8edea, #fed6e3, #ffecd2, #a1c4fd) border-box",
                     }}
                   >
-                    <img src={f.icon} alt={f.title} className="w-10 h-10 object-contain" />
+                    <img src={f.icon} alt={f.title} className="w-8 h-8 md:w-10 md:h-10 object-contain" />
                     <p className="text-xs font-semibold text-gray-700 leading-snug">{f.title}</p>
-                    <p className="text-xs text-gray-400 leading-relaxed">{f.desc}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed hidden md:block">{f.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="w-full max-w-3xl pb-8">
+            <div className="w-full max-w-3xl pb-6 md:pb-8">
               <ChatInput
                 value={message}
                 onChange={setMessage}
@@ -122,7 +125,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
         {/* ── KONSELING ── */}
         {isKonseling && (
           <div className="relative z-10 flex flex-col flex-1 min-h-screen">
-            <div className="flex-1 overflow-y-auto px-4 md:px-10 py-4 md:py-8 flex flex-col gap-5">
+            <div className="flex-1 overflow-y-auto px-4 md:px-10 py-6 md:py-8 flex flex-col gap-5">
               {messages.map((msg) => (
                 <ChatBubble key={msg.id} msg={msg} />
               ))}
@@ -130,7 +133,7 @@ export default function HomePage({ onLogout, user }: HomePageProps) {
               <div ref={chatEndRef} />
             </div>
 
-            <div className="px-4 md:px-10 pb-4 md:pb-8 pt-2">
+            <div className="px-4 md:px-10 pb-6 md:pb-8 pt-2">
               <ChatInput
                 value={message}
                 onChange={setMessage}

@@ -40,11 +40,26 @@ const RiwayatIcon = () => (
   </svg>
 );
 
+const MenuIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
 interface NavItem {
   key: string;
   label: string;
   icon: React.ReactNode;
-  isModal?: boolean; // true = buka modal, bukan navigasi halaman
+  isModal?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -66,11 +81,10 @@ interface SidebarProps {
   onNavigate?: (key: string) => void;
   onLogout?: () => void;
   user?: User;
-  // Ketiga handler modal dioper dari HomePage
   onShowUploadModal: () => void;
   onShowRekomendasiModal: () => void;
   onShowRiwayatModal: () => void;
-  activeModal?: "upload" | "rekomendasi" | "riwayat" | null; // ← tambah ini
+  activeModal?: "upload" | "rekomendasi" | "riwayat" | null;
 }
 
 export default function Sidebar({
@@ -84,6 +98,7 @@ export default function Sidebar({
   activeModal,
 }: SidebarProps) {
   const [active, setActive] = useState<string>(activeKey);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentUser: User = user ?? {
     name: "Pengguna",
@@ -92,26 +107,20 @@ export default function Sidebar({
   };
 
   const handleNav = (item: NavItem) => {
-    // Item modal: buka modal, tidak ubah active nav
     if (item.isModal) {
       if (item.key === "upload-khs")  onShowUploadModal();
       if (item.key === "rekomendasi") onShowRekomendasiModal();
       if (item.key === "riwayat")     onShowRiwayatModal();
+      setMobileOpen(false);
       return;
     }
-
-    // Item navigasi biasa
     setActive(item.key);
     onNavigate?.(item.key);
+    setMobileOpen(false);
   };
 
-  return (
+  const sidebarContent = (
     <>
-    {/* ── DESKTOP SIDEBAR ── */}
-    <aside
-      className="fixed top-0 left-0 bottom-0 w-56 flex-col px-4 py-7 z-40 hidden md:flex"
-      style={{ backgroundColor: "#FCFBFC", border: "1.5px solid transparent" }}
-    >
       {/* Logo */}
       <div className="flex justify-center mb-8">
         <img src={logo} alt="Logo" className="w-24 h-24 object-contain" />
@@ -120,31 +129,31 @@ export default function Sidebar({
       {/* Nav */}
       <nav className="flex flex-col justify-center gap-1 flex-1">
         {navItems.map((item) => {
-            const modalKeyMap: Record<string, string> = {
+          const modalKeyMap: Record<string, string> = {
             "upload":      "upload-khs",
             "rekomendasi": "rekomendasi",
             "riwayat":     "riwayat",
           };
-        const isActive =
-          activeModal != null
-            ? item.isModal && modalKeyMap[activeModal] === item.key  // modal kebuka: hanya highlight item modal
-            : !item.isModal && active === item.key;                  // modal tutup: highlight nav biasa
+          const isActive =
+            activeModal != null
+              ? item.isModal && modalKeyMap[activeModal] === item.key
+              : !item.isModal && active === item.key;
 
           return (
-              <button
-                key={item.key}
-                onClick={() => handleNav(item)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left transition-colors ${
-                  isActive
-                    ? "text-emerald-700 bg-white/40"
-                    : "text-gray-600 hover:bg-white/30 hover:text-gray-800"
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            );
-          })}
+            <button
+              key={item.key}
+              onClick={() => handleNav(item)}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-left transition-colors ${
+                isActive
+                  ? "text-emerald-700 bg-white/40"
+                  : "text-gray-600 hover:bg-white/30 hover:text-gray-800"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          );
+        })}
       </nav>
 
       {/* User Card */}
@@ -179,48 +188,51 @@ export default function Sidebar({
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
 
-    {/* ── MOBILE TOP HEADER ── */}
-    <header className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
-      style={{ backgroundColor: "#FCFBFC", borderBottom: "1px solid #e5e7eb" }}>
-      <img src={logo} alt="Logo" className="w-9 h-9 object-contain" />
-      <span className="text-sm font-bold" style={{ color: "#307045" }}>ChatbotFIK</span>
-      <div className="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center text-white text-xs font-bold">
-        {currentUser.name.charAt(0)}
+  return (
+    <>
+      {/* ── MOBILE TOP BAR ── */}
+      <div
+        className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
+        style={{ backgroundColor: "#FCFBFC", borderBottom: "1px solid #e5e7eb", height: 56 }}
+      >
+        <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+        <span className="text-sm font-bold" style={{ color: "#307045" }}>ChatbotFIK</span>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="p-1 text-gray-600"
+        >
+          {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
       </div>
-    </header>
 
-    {/* ── MOBILE BOTTOM NAVBAR ── */}
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
-      style={{ backgroundColor: "#FCFBFC", borderTop: "1px solid #e5e7eb" }}>
-      {navItems.map((item) => {
-        const modalKeyMap: Record<string, string> = {
-          "upload":      "upload-khs",
-          "rekomendasi": "rekomendasi",
-          "riwayat":     "riwayat",
-        };
-        const isActive = activeModal != null
-          ? item.isModal && modalKeyMap[activeModal] === item.key
-          : !item.isModal && active === item.key;
-        return (
-          <button key={item.key} onClick={() => handleNav(item)}
-            className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
-            style={{ color: isActive ? "#307045" : "#9ca3af" }}>
-            {item.icon}
-            <span className="text-[10px] font-medium">{item.label}</span>
-          </button>
-        );
-      })}
-      <button onClick={onLogout}
-        className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl"
-        style={{ color: "#9ca3af" }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-        <span className="text-[10px] font-medium">Keluar</span>
-      </button>
-    </nav>
+      {/* ── MOBILE DRAWER OVERLAY ── */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/30"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* ── MOBILE DRAWER ── */}
+      <aside
+        className={`md:hidden fixed top-0 left-0 bottom-0 w-64 flex flex-col px-4 py-7 z-50 transition-transform duration-300 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        style={{ backgroundColor: "#FCFBFC", paddingTop: 72 }}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* ── DESKTOP SIDEBAR ── */}
+      <aside
+        className="hidden md:flex fixed top-0 left-0 bottom-0 w-56 flex-col px-4 py-7 z-40"
+        style={{ backgroundColor: "#FCFBFC", border: "1.5px solid transparent" }}
+      >
+        {sidebarContent}
+      </aside>
     </>
   );
 }
