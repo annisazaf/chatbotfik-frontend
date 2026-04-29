@@ -1,5 +1,3 @@
-// src/services/adminServices.ts
-
 import { api } from "./api";
 import {
   ProdiItem,
@@ -9,42 +7,32 @@ import {
   ProdiFormData,
 } from "../types/admin";
 
-const authConfig = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-  },
-});
-
 export const adminService = {
   // ── Cek admin ──
   checkAdmin: async () => {
-    const res = await api.get("/admin/check", authConfig());
+    const res = await api.get("/admin/check");
     return res.data;
   },
 
   // ── PRODI ──
   listProdi: async (): Promise<ProdiItem[]> => {
-    const res = await api.get("/admin/prodi", authConfig());
+    const res = await api.get("/admin/prodi");
     return res.data.prodi || [];
   },
 
   getProdi: async (id: number): Promise<ProdiItem> => {
-    const res = await api.get(`/admin/prodi/${id}`, authConfig());
+    const res = await api.get(`/admin/prodi/${id}`);
     return res.data;
   },
 
   tambahProdi: async (data: ProdiFormData): Promise<ProdiItem> => {
-    const res = await api.post(
-      "/admin/prodi",
-      {
-        nama_prodi: data.nama_prodi,
-        total_semester: parseInt(data.total_semester),
-        sks_lulus: parseInt(data.sks_lulus),
-        syarat_sidang_sks: parseInt(data.syarat_sidang_sks),
-        is_active: data.is_active,
-      },
-      authConfig()
-    );
+    const res = await api.post("/admin/prodi", {
+      nama_prodi: data.nama_prodi,
+      total_semester: parseInt(data.total_semester),
+      sks_lulus: parseInt(data.sks_lulus),
+      syarat_sidang_sks: parseInt(data.syarat_sidang_sks),
+      is_active: data.is_active,
+    });
     return res.data.prodi;
   },
 
@@ -63,17 +51,17 @@ export const adminService = {
       payload.syarat_sidang_sks = parseInt(data.syarat_sidang_sks);
     if (data.is_active !== undefined) payload.is_active = data.is_active;
 
-    const res = await api.put(`/admin/prodi/${id}`, payload, authConfig());
+    const res = await api.put(`/admin/prodi/${id}`, payload);
     return res.data.prodi;
   },
 
   hapusProdi: async (id: number): Promise<void> => {
-    await api.delete(`/admin/prodi/${id}`, authConfig());
+    await api.delete(`/admin/prodi/${id}`);
   },
 
   // ── MATA KULIAH ──
   listMK: async (prodiId: number): Promise<MKListResponse> => {
-    const res = await api.get(`/admin/prodi/${prodiId}/mk`, authConfig());
+    const res = await api.get(`/admin/prodi/${prodiId}/mk`);
     return res.data;
   },
 
@@ -81,19 +69,15 @@ export const adminService = {
     prodiId: number,
     data: MKFormData
   ): Promise<MataKuliahItem> => {
-    const res = await api.post(
-      "/admin/mk",
-      {
-        prodi_id: prodiId,
-        kode: data.kode,
-        nama: data.nama,
-        sks: parseInt(data.sks),
-        semester: parseInt(data.semester),
-        keterangan: data.keterangan || null,
-        prasyarat: data.prasyarat || null,
-      },
-      authConfig()
-    );
+    const res = await api.post("/admin/mk", {
+      prodi_id: prodiId,
+      kode: data.kode,
+      nama: data.nama,
+      sks: parseInt(data.sks),
+      semester: parseInt(data.semester),
+      keterangan: data.keterangan || null,
+      prasyarat: data.prasyarat || null,
+    });
     return res.data.mk;
   },
 
@@ -112,12 +96,12 @@ export const adminService = {
     if (data.prasyarat !== undefined)
       payload.prasyarat = data.prasyarat || null;
 
-    const res = await api.put(`/admin/mk/${mkId}`, payload, authConfig());
+    const res = await api.put(`/admin/mk/${mkId}`, payload);
     return res.data.mk;
   },
 
   hapusMK: async (mkId: number): Promise<void> => {
-    await api.delete(`/admin/mk/${mkId}`, authConfig());
+    await api.delete(`/admin/mk/${mkId}`);
   },
 
   // ── IMPORT XLSX ──
@@ -134,7 +118,6 @@ export const adminService = {
 
     const res = await api.post("/admin/import-xlsx", formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
         "Content-Type": "multipart/form-data",
       },
     });
