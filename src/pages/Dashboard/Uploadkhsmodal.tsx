@@ -1,5 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { KHSResult } from "../../types/chat";
+import { tokenStorage } from "../../services/authServices";
+
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+// Header JWT
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const token = tokenStorage.get();
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
+}
 
 const PaperclipIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -45,8 +57,8 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
   useEffect(() => {
     const fetchLatest = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/khs/latest`, {
-          credentials: "include",
+        const res = await fetch(`${API}/chatbot/khs/latest`, {
+          headers: authHeaders(),
         });
         const data = await res.json();
         setLatestKHS(data);
@@ -77,9 +89,9 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
     formData.append("file", selectedFile);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/chatbot/upload`, {
+      const res = await fetch(`${API}/chatbot/upload`, {
         method: "POST",
-        credentials: "include",
+        headers: authHeaders(), // Note: jangan tambah Content-Type untuk FormData
         body: formData,
       });
       const data = await res.json();
@@ -96,7 +108,6 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
   const isLoading = uploadState === "loading";
   const isSuccess = uploadState === "success";
 
-  // Format tanggal upload
   const formatDate = (iso?: string) => {
     if (!iso) return "-";
     return new Date(iso).toLocaleDateString("id-ID", {
@@ -195,15 +206,13 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
             </div>
           )}
 
-          {/* ── KHS TERAKHIR — muncul di bawah syarat, hanya jika sudah pernah upload ── */}
+          {/* KHS Terakhir */}
           {!isSuccess && !loadingLatest && latestKHS?.has_khs && (
             <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 flex flex-col gap-2.5">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-gray-700">KHS Terakhir</p>
                 <span className="text-xs text-gray-400">{formatDate(latestKHS.upload_time)}</span>
               </div>
-
-              {/* Stats */}
               <div className="grid grid-cols-3 divide-x divide-gray-200 border border-gray-100 rounded-xl bg-white">
                 {[
                   { label: "IPK", value: latestKHS.ipk },
@@ -216,28 +225,20 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
                   </div>
                 ))}
               </div>
-
-              {/* Progress */}
               <div>
                 <div className="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Progres Studi</span>
                   <span style={{ color: "#307045" }}>{latestKHS.persen}%</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                  <div
-                    className="h-full rounded-full"
-                    style={{ width: `${latestKHS.persen}%`, backgroundColor: "#307045" }}
-                  />
+                  <div className="h-full rounded-full" style={{ width: `${latestKHS.persen}%`, backgroundColor: "#307045" }} />
                 </div>
               </div>
-
-              <p className="text-xs text-gray-400 text-center">
-                Upload KHS baru untuk memperbarui data ini
-              </p>
+              <p className="text-xs text-gray-400 text-center">Upload KHS baru untuk memperbarui data ini</p>
             </div>
           )}
 
-          {/* Loading state untuk latest KHS */}
+          {/* Loading latest KHS */}
           {!isSuccess && loadingLatest && (
             <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4 flex items-center justify-center gap-2">
               <div className="w-4 h-4 rounded-full border-2 animate-spin"
@@ -248,11 +249,10 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
 
           <div className="h-px bg-gray-100" />
 
-          {/* ── RINGKASAN — muncul hanya setelah sukses ── */}
+          {/* Ringkasan setelah sukses */}
           {isSuccess && result && (
             <div className="flex flex-col gap-3">
               <p className="text-sm font-bold text-gray-800">Ringkasan KHS</p>
-
               <div className="flex flex-col gap-1.5">
                 {[
                   { label: "Nama",          value: result.nama },
@@ -265,7 +265,6 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
                   </div>
                 ))}
               </div>
-
               <div className="grid grid-cols-3 divide-x divide-gray-100 border border-gray-100 rounded-2xl">
                 {[
                   { label: "IPK", value: result.ipk },
@@ -278,20 +277,16 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
                   </div>
                 ))}
               </div>
-
               <div>
                 <div className="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Progres Studi</span>
                   <span style={{ color: "#307045" }}>{result.persen}%</span>
                 </div>
                 <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{ width: `${result.persen}%`, backgroundColor: "#307045" }}
-                  />
+                  <div className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${result.persen}%`, backgroundColor: "#307045" }} />
                 </div>
               </div>
-
               <div className="flex gap-2">
                 <div className="flex-1 rounded-xl bg-green-50 px-3 py-2.5 text-center">
                   <p className="text-lg font-bold" style={{ color: "#307045" }}>{result.mk_lulus}</p>
@@ -309,20 +304,13 @@ export default function UploadKHSModal({ onClose, onSuccess }: UploadKHSModalPro
         {/* Footer */}
         <div className="px-5 pb-6 pt-3">
           {isSuccess ? (
-            <button
-              onClick={onClose}
-              className="w-full py-3.5 rounded-2xl text-white text-sm font-semibold"
-              style={{ backgroundColor: "#307045" }}
-            >
+            <button onClick={onClose} className="w-full py-3.5 rounded-2xl text-white text-sm font-semibold" style={{ backgroundColor: "#307045" }}>
               Mulai Chat →
             </button>
           ) : (
-            <button
-              onClick={handleUpload}
-              disabled={!selectedFile || isLoading}
+            <button onClick={handleUpload} disabled={!selectedFile || isLoading}
               className="w-full py-3.5 rounded-2xl text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ backgroundColor: "#307045" }}
-            >
+              style={{ backgroundColor: "#307045" }}>
               {isLoading ? "Memproses..." : "Upload & Proses"}
             </button>
           )}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChatMessage, KHSResult } from "../types/chat";
+import { tokenStorage } from "../services/authServices";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -12,6 +13,15 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     content: `Halo! 👋\nAku FIKA, Asisten Konseling Akademik dan Karier Mahasiswa FIK UPN "Veteran" Jakarta.\n\nSebelum mulai, pastikan kamu sudah mengunggah KHS terbaru agar analisisku lebih akurat. Upload di menu Upload KHS ya 😊`,
   },
 ];
+
+// Header JWT untuk setiap request
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const token = tokenStorage.get();
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
+}
 
 // Pesan error yang ramah berdasarkan jenis error
 function parseErrorMessage(err: unknown): string {
@@ -66,7 +76,10 @@ export function useChat() {
   // ── Lanjut sesi lama dari riwayat ──
   const loadSession = async (sid: string) => {
     try {
-      const res  = await fetchWithTimeout(`${API}/chatbot/sessions/${sid}`, { credentials: "include" });
+      const res = await fetchWithTimeout(
+        `${API}/chatbot/sessions/${sid}`,
+        { headers: authHeaders() }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
@@ -79,12 +92,15 @@ export function useChat() {
       setMessages(loaded.length > 0 ? loaded : INITIAL_MESSAGES);
 
       if (data.khs_upload_id) {
-        const khsRes  = await fetchWithTimeout(`${API}/chatbot/sessions/${sid}/khs`, { credentials: "include" });
+        const khsRes  = await fetchWithTimeout(
+          `${API}/chatbot/sessions/${sid}/khs`,
+          { headers: authHeaders() }
+        );
         const khsData = await khsRes.json();
         if (khsRes.ok) setKhsResult(khsData as KHSResult);
       }
     } catch {
-      // Gagal load sesi — biarkan state apa adanya, tidak perlu tampilkan error
+      // Gagal load sesi — biarkan state apa adanya
     }
   };
 
@@ -92,12 +108,10 @@ export function useChat() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isReplying) return;
 
-    // Tampilkan pesan user langsung
     setMessages(prev => [...prev, { id: Date.now(), role: "user", content: text.trim() }]);
     setIsReplying(true);
 
     try {
-      // Belum upload KHS
       if (!sessionId) {
         setTimeout(() => {
           setMessages(prev => [...prev, {
@@ -114,11 +128,10 @@ export function useChat() {
         `${API}/chatbot/chat`,
         {
           method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
+          headers: authHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({ session_id: sessionId, pesan: text.trim() }),
         },
-        70000  // 70 detik — sedikit lebih dari timeout backend (60 detik)
+        70000
       );
 
       const data = await res.json();
