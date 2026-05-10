@@ -7,7 +7,7 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-// AUTO KIRIM TOKEN KE SEMUA REQUEST
+// kirim token ke semua request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY);
 

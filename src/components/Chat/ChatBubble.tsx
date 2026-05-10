@@ -1,7 +1,7 @@
-// src/components/Chat/ChatBubble.tsx
 import logo from "../../assets/logo.svg";
 import { ChatMessage } from "../../types/chat";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatBubbleProps {
   msg: ChatMessage;
@@ -29,12 +29,33 @@ export default function ChatBubble({ msg, userInitial = "A" }: ChatBubbleProps) 
           <span className="whitespace-pre-wrap">{msg.content}</span>
         ) : (
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
               strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
               ul: ({ children }) => <ul className="list-disc list-inside mb-1">{children}</ul>,
               ol: ({ children }) => <ol className="list-decimal list-inside mb-1">{children}</ol>,
               li: ({ children }) => <li className="ml-2">{children}</li>,
+              table: ({ children }) => (
+                <div className="overflow-x-auto my-2">
+                  <table className="w-full border-collapse text-xs">{children}</table>
+                </div>
+              ),
+              thead: ({ children }) => (
+                <thead className="bg-gray-50">{children}</thead>
+              ),
+              tbody: ({ children }) => <tbody>{children}</tbody>,
+              tr: ({ children }) => (
+                <tr className="border-b border-gray-100">{children}</tr>
+              ),
+              th: ({ children }) => (
+                <th className="px-3 py-2 text-left font-semibold text-gray-600 border border-gray-200">
+                  {children}
+                </th>
+              ),
+              td: ({ children }) => (
+                <td className="px-3 py-2 text-gray-700 border border-gray-200">{children}</td>
+              ),
             }}
           >
             {msg.content}

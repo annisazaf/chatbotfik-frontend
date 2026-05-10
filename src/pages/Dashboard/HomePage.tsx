@@ -1,5 +1,3 @@
-// src/pages/HomePage.tsx
-
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "./SideBar";
 import bgImage from "../../assets/Background.png";

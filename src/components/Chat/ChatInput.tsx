@@ -1,11 +1,3 @@
-// src/components/Chat/ChatInput.tsx
-//
-// Dipakai di HomePage (beranda) dan di halaman konseling.
-// Props:
-//   onSend          → kirim pesan
-//   onUploadClick   → buka modal upload KHS
-//   disabled        → saat AI sedang reply
-
 import { useRef } from "react";
 
 const PaperclipIcon = () => (

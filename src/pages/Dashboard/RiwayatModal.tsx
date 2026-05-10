@@ -1,5 +1,3 @@
-// src/components/Dashboard/RiwayatModal.tsx
-
 import { useEffect, useState } from "react";
 import logo from "../../assets/logo.svg";
 import { RiwayatItem } from "../../types/chat";

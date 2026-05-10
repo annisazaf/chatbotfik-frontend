@@ -1,5 +1,3 @@
-// src/components/Dashboard/RekomendasiModal.tsx
-
 import { useEffect, useState } from "react";
 import { KHSResult, RekomendasiData, MataKuliahEligible, MataKuliahBelum } from "../../types/chat";
 import { tokenStorage } from "../../services/authServices";

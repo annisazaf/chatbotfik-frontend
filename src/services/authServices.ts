@@ -11,10 +11,7 @@ export interface RegisterRequest extends UserData {
   password: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// TOKEN HELPERS — simpan JWT di localStorage
-// ─────────────────────────────────────────────────────────────
-
+// Token helpers (simpan JWT di localStorage)
 const TOKEN_KEY = "chatbotfik_token";
 
 export const tokenStorage = {
@@ -23,18 +20,16 @@ export const tokenStorage = {
   remove: (): void => localStorage.removeItem(TOKEN_KEY),
 };
 
-// ─────────────────────────────────────────────────────────────
 // AUTH SERVICE
-// ─────────────────────────────────────────────────────────────
 
 export const authService = {
-  // REGISTER
+  // Register
   register: async (data: RegisterRequest) => {
     const response = await api.post("/register", data);
     return response.data;
   },
 
-  // LOGIN — simpan token ke localStorage
+  // Login (simpan token ke localStorage)
   login: async (nim: string, pass: string) => {
     const response = await api.post("/login", { nim, password: pass });
     const { token, user } = response.data;
@@ -42,7 +37,7 @@ export const authService = {
     return { token, user };
   },
 
-  // GET ME — kirim token via Authorization header
+  // Get me (kirim token via Authorization header)
   getMe: async () => {
     const token = tokenStorage.get();
     const response = await api.get<UserData>("/me", {
@@ -51,9 +46,9 @@ export const authService = {
     return response.data;
   },
 
-  // LOGOUT — hapus token dari localStorage
+  // Logout (hapus token dari localStorage)
   logout: async () => {
     tokenStorage.remove();
-    await api.post("/logout").catch(() => {}); // best effort
+    await api.post("/logout").catch(() => {}); 
   },
 };

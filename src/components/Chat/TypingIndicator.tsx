@@ -1,6 +1,3 @@
-// src/components/Chat/TypingIndicator.tsx
-// Muncul saat isReplying === true
-
 import logo from "../../assets/logo.svg";
 
 export default function TypingIndicator() {

@@ -1,6 +1,4 @@
-// src/types/admin.ts
-
-export interface PeminатанConfig {
+export interface PeminatanConfig {
   harus_konsisten: boolean;
   min_mk_per_jalur: number;
   jalur: Record<string, string>;
@@ -27,7 +25,7 @@ export interface ProdiItem {
   sks_lulus: number;
   syarat_sidang_sks: number;
   is_active: boolean;
-  peminatan_config: PeminатанConfig | null;
+  peminatan_config: PeminatanConfig | null;
   total_mk: number;
   total_sks: number;
   created_at: string;
@@ -64,5 +62,23 @@ export interface ProdiFormData {
   total_semester: string;
   sks_lulus: string;
   syarat_sidang_sks: string;
+  is_active: boolean;
+}
+
+// Informasi chatbot
+export interface PengetahuanItem {
+  id: number;
+  judul: string;
+  konten: string;
+  kategori: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface PengetahuanFormData {
+  judul: string;
+  konten: string;
+  kategori: string;
   is_active: boolean;
 }

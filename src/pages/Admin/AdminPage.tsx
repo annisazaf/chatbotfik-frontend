@@ -1,8 +1,6 @@
-// src/pages/Admin/AdminPage.tsx
-
 import { useState, useEffect, useRef } from "react";
 import { adminService } from "../../services/adminServices";
-import { ProdiItem, MataKuliahItem, MKFormData, ProdiFormData } from "../../types/admin";
+import { ProdiItem, MataKuliahItem, MKFormData, ProdiFormData, PengetahuanItem, PengetahuanFormData } from "../../types/admin";
 
 const GREEN = "#307045";
 
@@ -165,7 +163,7 @@ function ProdiModal({ mode, prodi, onSave, onClose }: { mode: "tambah" | "edit";
   );
 }
 
-// ── Modal Konfirmasi Hapus ──
+// Modal Konfirmasi Hapus
 function ConfirmModal({ pesan, onConfirm, onClose }: { pesan: string; onConfirm: () => void; onClose: () => void; }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
@@ -182,7 +180,7 @@ function ConfirmModal({ pesan, onConfirm, onClose }: { pesan: string; onConfirm:
   );
 }
 
-// ── Tab: Daftar Pengguna ──
+// Tab: Daftar Pengguna
 type TabPenggunaProps = {
   currentNim: string;
 };
@@ -334,8 +332,251 @@ function TabPengguna({ currentNim }: TabPenggunaProps) {
   );
 }
 
-// ── HALAMAN UTAMA ADMIN ──
-type ActiveTab = "kurikulum" | "pengguna";
+// ── Modal Pengetahuan Chatbot ──
+const KATEGORI_OPTIONS = ["", "akademik", "karier", "umum", "prosedur", "jadwal", "lainnya"];
+const EMPTY_PENGETAHUAN: PengetahuanFormData = { judul: "", konten: "", kategori: "", is_active: true };
+
+function PengetahuanModal({ mode, item, onSave, onClose }: {
+  mode: "tambah" | "edit"; item?: PengetahuanItem; onSave: () => void; onClose: () => void;
+}) {
+  const [form, setForm] = useState<PengetahuanFormData>(
+    item
+      ? { judul: item.judul, konten: item.konten, kategori: item.kategori || "", is_active: item.is_active }
+      : EMPTY_PENGETAHUAN
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
+
+  const handleSubmit = async () => {
+    if (!form.judul.trim()) return setError("Judul wajib diisi.");
+    if (!form.konten.trim()) return setError("Konten wajib diisi.");
+    setLoading(true); setError("");
+    try {
+      if (mode === "tambah") await adminService.tambahPengetahuan(form);
+      else if (item) await adminService.editPengetahuan(item.id, form);
+      onSave(); onClose();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } } };
+      setError(err.response?.data?.error || "Gagal menyimpan.");
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+        <h3 className="text-lg font-bold text-gray-800">
+          {mode === "tambah" ? "Tambah Informasi Chatbot" : "Edit Informasi Chatbot"}
+        </h3>
+        <p className="text-xs text-gray-400 -mt-2">Informasi ini akan otomatis muncul di konteks chatbot saat mahasiswa bertanya.</p>
+
+        {error && <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-2">{error}</div>}
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-gray-600">Judul <span className="text-red-400">*</span></label>
+          <input
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400"
+            placeholder="Contoh: Jadwal Pendaftaran KRS 2025/2026"
+            value={form.judul}
+            onChange={e => setForm(f => ({ ...f, judul: e.target.value }))}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-gray-600">Kategori</label>
+          <select
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 bg-white"
+            value={form.kategori}
+            onChange={e => setForm(f => ({ ...f, kategori: e.target.value }))}
+          >
+            {KATEGORI_OPTIONS.map(k => <option key={k} value={k}>{k || "— pilih kategori —"}</option>)}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-gray-600">Konten Informasi <span className="text-red-400">*</span></label>
+          <textarea
+            rows={7}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-green-400 resize-y font-mono"
+            placeholder={"Tulis informasi yang ingin diketahui chatbot...\n\nContoh:\nPendaftaran KRS semester ganjil 2025/2026 dibuka mulai 1 Juli 2025.\nMahasiswa wajib konsultasi dengan dosen wali sebelum mengisi KRS.\nBatas maksimal SKS per semester: 24 SKS (IPK ≥ 3.0) atau 21 SKS (IPK < 3.0)."}
+            value={form.konten}
+            onChange={e => setForm(f => ({ ...f, konten: e.target.value }))}
+          />
+          <p className="text-xs text-gray-400">Tulis sejelas mungkin, chatbot akan menjawab berdasarkan teks ini.</p>
+        </div>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))} className="w-4 h-4 accent-green-600" />
+          <span className="text-sm text-gray-600">Aktif (langsung digunakan chatbot)</span>
+        </label>
+
+        <div className="flex gap-2 mt-1">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50">Batal</button>
+          <button onClick={handleSubmit} disabled={loading} className="flex-1 py-2.5 rounded-xl text-white text-sm font-medium disabled:opacity-50" style={{ backgroundColor: GREEN }}>
+            {loading ? "Menyimpan..." : "Simpan"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Tab: Pengetahuan Chatbot
+function TabPengetahuan() {
+  const [list, setList]         = useState<PengetahuanItem[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [modal, setModal]       = useState<{ mode: "tambah" | "edit"; item?: PengetahuanItem } | null>(null);
+  const [confirmHapus, setConfirmHapus] = useState<PengetahuanItem | null>(null);
+  const [togglingId, setTogglingId]     = useState<number | null>(null);
+  const [search, setSearch]     = useState("");
+
+  const load = async () => {
+    setLoading(true);
+    try { setList(await adminService.listPengetahuan()); }
+    catch { setList([]); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleToggleAktif = async (item: PengetahuanItem) => {
+    setTogglingId(item.id);
+    try {
+      await adminService.editPengetahuan(item.id, { is_active: !item.is_active });
+      setList(prev => prev.map(p => p.id === item.id ? { ...p, is_active: !p.is_active } : p));
+    } catch { /* abaikan */ }
+    finally { setTogglingId(null); }
+  };
+
+  const handleHapus = async () => {
+    if (!confirmHapus) return;
+    try {
+      await adminService.hapusPengetahuan(confirmHapus.id);
+      setList(prev => prev.filter(p => p.id !== confirmHapus.id));
+    } catch { /* abaikan */ }
+    setConfirmHapus(null);
+  };
+
+  const filtered = list.filter(p =>
+    !search || p.judul.toLowerCase().includes(search.toLowerCase()) || p.konten.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalAktif = list.filter(p => p.is_active).length;
+
+  const KATEGORI_COLOR: Record<string, { bg: string; text: string }> = {
+    akademik:  { bg: "#dbeafe", text: "#1e40af" },
+    karier:    { bg: "#fce7f3", text: "#9d174d" },
+    umum:      { bg: "#f3f4f6", text: "#374151" },
+    prosedur:  { bg: "#fef3c7", text: "#92400e" },
+    jadwal:    { bg: "#e0e7ff", text: "#3730a3" },
+    lainnya:   { bg: "#f0fdf4", text: "#166534" },
+  };
+
+  return (
+    <div className="flex-1 px-4 md:px-8 py-4 md:py-6 flex flex-col gap-5">
+
+      {/* Stat + tombol tambah */}
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold" style={{ backgroundColor: "#e8f5ed", color: GREEN }}>{list.length}</div>
+          <div><p className="text-xs text-gray-400">Total Informasi</p><p className="text-lg font-bold text-gray-800">{list.length} entri</p></div>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold" style={{ backgroundColor: "#dcfce7", color: "#166534" }}>{totalAktif}</div>
+          <div><p className="text-xs text-gray-400">Aktif (digunakan chatbot)</p><p className="text-lg font-bold text-gray-800">{totalAktif} entri</p></div>
+        </div>
+        <button
+          onClick={() => setModal({ mode: "tambah" })}
+          className="ml-auto px-4 py-2.5 rounded-xl text-white text-sm font-medium flex items-center gap-2"
+          style={{ backgroundColor: GREEN }}
+        >
+          + Tambah Informasi
+        </button>
+      </div>
+
+      {/* Info */}
+      <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-sm text-blue-700 flex items-start gap-2">
+        <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Pengetahuan yang aktif akan otomatis disertakan ke konteks chatbot.</span>
+      </div>
+
+      {/* Search */}
+      <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 max-w-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Cari judul atau konten..." value={search} onChange={e => setSearch(e.target.value)} className="text-sm text-gray-600 outline-none bg-transparent w-full placeholder-gray-300" />
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: GREEN, borderTopColor: "transparent" }} />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-400">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4m0 4h.01"/></svg>
+          <span className="text-sm">{search ? "Tidak ada hasil pencarian." : "Belum ada informasi. Klik \"+ Tambah Informasi\" untuk memulai."}</span>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {filtered.map(item => {
+            const katColor = item.kategori ? (KATEGORI_COLOR[item.kategori] || KATEGORI_COLOR["lainnya"]) : null;
+            return (
+              <div key={item.id} className={`bg-white rounded-2xl border p-5 flex flex-col gap-3 transition-opacity ${item.is_active ? "border-gray-100" : "border-gray-100 opacity-60"}`}>
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-gray-800 text-sm">{item.judul}</span>
+                      {katColor && item.kategori && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: katColor.bg, color: katColor.text }}>{item.kategori}</span>
+                      )}
+                      {!item.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">non-aktif</span>}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">Dibuat: {new Date(item.created_at).toLocaleDateString("id-ID")}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Toggle aktif */}
+                    <button
+                      onClick={() => handleToggleAktif(item)}
+                      disabled={togglingId === item.id}
+                      title={item.is_active ? "Nonaktifkan" : "Aktifkan"}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors disabled:opacity-40 ${item.is_active ? "border-green-200 text-green-700 bg-green-50 hover:bg-green-100" : "border-gray-200 text-gray-500 bg-gray-50 hover:bg-gray-100"}`}
+                    >
+                      {togglingId === item.id ? "..." : item.is_active ? "✓ Aktif" : "Nonaktif"}
+                    </button>
+                    <button onClick={() => setModal({ mode: "edit", item })} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-200 transition-colors" title="Edit">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button onClick={() => setConfirmHapus(item)} className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-400 hover:border-red-200 transition-colors" title="Hapus">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </div>
+                {/* Preview konten */}
+                <div className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-600 font-mono whitespace-pre-wrap max-h-32 overflow-y-auto">
+                  {item.konten}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {modal && (
+        <PengetahuanModal mode={modal.mode} item={modal.item} onSave={load} onClose={() => setModal(null)} />
+      )}
+      {confirmHapus && (
+        <ConfirmModal
+          pesan={`Yakin hapus pengetahuan "${confirmHapus.judul}"? Tindakan ini tidak dapat dibatalkan.`}
+          onConfirm={handleHapus}
+          onClose={() => setConfirmHapus(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// Halaman utama admin
+type ActiveTab = "kurikulum" | "pengguna" | "pengetahuan";
 
 type AdminPageProps = {
   onLogout: () => void | Promise<void>;
@@ -436,8 +677,9 @@ export default function AdminPage({ onLogout, currentNim }: AdminPageProps) {
         {/* Tab navigasi */}
         <div className="px-3 py-3 border-b border-gray-100 flex flex-col gap-1">
           {([
-            { key: "kurikulum", label: "Kurikulum", icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
-            { key: "pengguna", label: "Pengguna", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
+            { key: "kurikulum",   label: "Kurikulum",   icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
+            { key: "pengetahuan", label: "Informasi", icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" },
+            { key: "pengguna",    label: "Pengguna",    icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
           ] as const).map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === tab.key ? "text-emerald-700 bg-green-50" : "text-gray-500 hover:bg-gray-50"}`}>
@@ -467,7 +709,7 @@ export default function AdminPage({ onLogout, currentNim }: AdminPageProps) {
           </div>
         )}
 
-        {activeTab === "pengguna" && <div className="flex-1" />}
+        {(activeTab === "pengguna" || activeTab === "pengetahuan") && <div className="flex-1" />}
 
         <div className="px-3 py-4 border-t border-gray-100 flex flex-col gap-2">
           {activeTab === "kurikulum" && (
@@ -487,6 +729,11 @@ export default function AdminPage({ onLogout, currentNim }: AdminPageProps) {
           <div>
             {activeTab === "pengguna" ? (
               <h1 className="text-xl font-bold text-gray-800">Daftar Pengguna</h1>
+            ) : activeTab === "pengetahuan" ? (
+              <>
+                <h1 className="text-xl font-bold text-gray-800">Informasi Chatbot</h1>
+                <p className="text-xs text-gray-400 mt-0.5">Kelola informasi yang digunakan FIKA untuk menjawab pertanyaan mahasiswa</p>
+              </>
             ) : selectedProdi ? (
               <>
                 <h1 className="text-xl font-bold text-gray-800">{selectedProdi.nama_prodi}</h1>
@@ -532,6 +779,9 @@ export default function AdminPage({ onLogout, currentNim }: AdminPageProps) {
 
         {/* ── Tab: Pengguna ── */}
         {activeTab === "pengguna" && <TabPengguna currentNim={currentNim} />}
+
+        {/* ── Tab: Pengetahuan ── */}
+        {activeTab === "pengetahuan" && <TabPengetahuan />}
 
         {/* ── Tab: Kurikulum ── */}
         {activeTab === "kurikulum" && selectedProdi && (

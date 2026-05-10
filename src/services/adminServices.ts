@@ -5,6 +5,8 @@ import {
   MKListResponse,
   MKFormData,
   ProdiFormData,
+  PengetahuanItem,
+  PengetahuanFormData,
 } from "../types/admin";
 
 export const adminService = {
@@ -102,6 +104,36 @@ export const adminService = {
 
   hapusMK: async (mkId: number): Promise<void> => {
     await api.delete(`/admin/mk/${mkId}`);
+  },
+
+  // ── PENGETAHUAN CHATBOT ──
+  listPengetahuan: async (): Promise<PengetahuanItem[]> => {
+    const res = await api.get("/admin/pengetahuan");
+    return res.data.pengetahuan || [];
+  },
+
+  tambahPengetahuan: async (data: PengetahuanFormData): Promise<PengetahuanItem> => {
+    const res = await api.post("/admin/pengetahuan", {
+      judul:     data.judul,
+      konten:    data.konten,
+      kategori:  data.kategori || null,
+      is_active: data.is_active,
+    });
+    return res.data.pengetahuan;
+  },
+
+  editPengetahuan: async (id: number, data: Partial<PengetahuanFormData>): Promise<PengetahuanItem> => {
+    const payload: Record<string, unknown> = {};
+    if (data.judul     !== undefined) payload.judul     = data.judul;
+    if (data.konten    !== undefined) payload.konten    = data.konten;
+    if (data.kategori  !== undefined) payload.kategori  = data.kategori || null;
+    if (data.is_active !== undefined) payload.is_active = data.is_active;
+    const res = await api.put(`/admin/pengetahuan/${id}`, payload);
+    return res.data.pengetahuan;
+  },
+
+  hapusPengetahuan: async (id: number): Promise<void> => {
+    await api.delete(`/admin/pengetahuan/${id}`);
   },
 
   // ── IMPORT XLSX ──

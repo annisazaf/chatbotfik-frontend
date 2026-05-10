@@ -1,5 +1,3 @@
-// src/types/chat.ts
-
 export interface ChatMessage {
   id: number;
   role: "assistant" | "user";
