@@ -99,7 +99,12 @@ export default function LoginPage({ onLoginSuccess }: Props) {
                   onChange={e => { setNim(e.target.value); setError(null); }} required />
               </div>
               <div>
-                <label className="auth-form__label">Password</label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label className="auth-form__label">Password</label>
+                  <Link to="/forgot-password" className="auth-form__link" style={{ fontSize: 12 }}>
+                    Lupa password?
+                  </Link>
+                </div>
                 <Input className="auth-form__input" type="password" placeholder="••••••••" value={password}
                   onChange={e => { setPassword(e.target.value); setError(null); }} required />
               </div>

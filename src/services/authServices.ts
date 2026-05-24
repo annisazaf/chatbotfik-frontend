@@ -46,9 +46,21 @@ export const authService = {
     return response.data;
   },
 
-  // Logout (hapus token dari localStorage)
+  // Lupa password – kirim email reset
+  forgotPassword: async (email: string) => {
+    const response = await api.post("/forgot-password", { email });
+    return response.data;
+  },
+
+  // Reset password dengan token dari email
+  resetPassword: async (token: string, password: string) => {
+    const response = await api.post("/reset-password", { token, password });
+    return response.data;
+  },
+
+  // Logout
   logout: async () => {
     tokenStorage.remove();
-    await api.post("/logout").catch(() => {}); 
+    await api.post("/logout").catch(() => {});
   },
 };

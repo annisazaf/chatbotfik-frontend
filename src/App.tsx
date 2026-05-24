@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { authService } from "./services/authServices";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/Dashboard/HomePage";
 import AdminPage from "./pages/Admin/AdminPage";
 import { Loader2 } from "lucide-react";
@@ -66,6 +68,15 @@ function App() {
             !isAuth ? <RegisterPage /> : <Navigate to={isAdmin ? "/admin" : "/home"} replace />
           }
         />
+
+        {/* Lupa password */}
+        <Route
+          path="/forgot-password"
+          element={!isAuth ? <ForgotPasswordPage /> : <Navigate to={isAdmin ? "/admin" : "/home"} replace />}
+        />
+
+        {/* Reset password (via link email) */}
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Dashboard mahasiswa */}
         <Route
